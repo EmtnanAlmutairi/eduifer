@@ -80,7 +80,7 @@ $conn->close();
                 </div>
             </div>
         </nav>
-        <div class="relative flex flex-col items-center justify-center h-screen pt-20 bg-cover bg-center" style="background-image: url('../switch/src/images/bg.png');">
+        <div class="relative flex flex-col items-center justify-center h-screen pt-20 bg-cover bg-center" style="background-image: url('./src/images/bg.png');">
             <div class="relative z-10 text-center bg-white bg-opacity-75 p-6 rounded-lg">
                 <h1 class="text-4xl font-extrabold text-gray-800">Transform Learning with Gamification</h1>
                 <p class="mt-4 text-gray-600">Enhance employee engagement and knowledge retention with EDU-fier</p>
