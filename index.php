@@ -65,6 +65,8 @@ $conn->close();
     <title>EDU-fier</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/custom.css">
 </head>
 
 <body class="bg-white">
@@ -88,7 +90,7 @@ $conn->close();
         </div>
     </header>
 
-    <section id="about" class="bg-[#8E6FB2] py-12">
+    <section id="about" class="bg-primary py-12">
         <div class="container mx-auto text-center p-20">
             <h2 class="text-4xl font-bold mb-4">About EDU-fier</h2>
             <p class="text-gray-700 mb-6">
@@ -124,7 +126,7 @@ $conn->close();
                     <div class="flex flex-col items-center mt-4">
                         <input type="text" name="name" placeholder="Your Name" class="w-80 mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" required />
                         <input type="email" name="email" placeholder="Your Email" class="w-80 mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500" required />
-                        <button type="submit" class="w-80 py-3 bg-[#8E6FB2] text-white rounded-md transition">Get Early Access!</button>
+                        <button type="submit" class="w-80 py-3 bg-primary text-white rounded-md transition">Get Early Access!</button>
                     </div>
                 </form>
             </div>
