@@ -4,7 +4,35 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "eduifer";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Create table if not exists
+$sql = "CREATE TABLE IF NOT EXISTS users (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(30) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)";
+
+if ($conn->query($sql) === FALSE) {
+    die("Error creating table: " . $conn->error);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Verify CSRF token
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+        die("CSRF token validation failed");
+    }
+
     $name = htmlspecialchars($_POST['name']);
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 
@@ -12,28 +40,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Invalid email format.");
     }
 
-    // Database connection
-    $servername = "localhost";
-    $username = "your_username";
-    $password = "your_password";
-    $dbname = "edufier";
+    // Use prepared statement to prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
+    $stmt->bind_param("ss", $name, $email);
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    $sql = "INSERT INTO users (name, email) VALUES ('$name', '$email')";
-    if ($conn->query($sql) === TRUE) {
+    if ($stmt->execute()) {
         echo "<script>alert('Thank you, $name! Your information has been submitted.');</script>";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: " . $stmt->error;
     }
+
+    $stmt->close();
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,11 +66,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
+
 <body class="bg-white">
     <header class="relative bg-white">
         <nav class="fixed top-0 left-0 right-0 bg-white shadow-lg z-10 p-4">
             <div class="container mx-auto flex items-center justify-between">
-                <img src="../switch/src/images/Rectangle 1.png" alt="Logo" class="w-32 h-20">
+                <img src="./src/images/Rectangle 1.png" alt="Logo" class="w-32 h-20">
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="#" class="text-gray-600 font-semibold hover:bg-gray-300 rounded-lg p-2 transition">Home</a>
                     <a href="#about" class="text-gray-600 font-semibold hover:bg-gray-300 rounded-lg p-2 transition">About</a>
@@ -113,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </a>
                 <a href="#" class="hover:bg-gray-700 rounded-full p-2" title="Twitter">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20px" height="20px">
-                        <path fill="#ffffff" d="M12 2C6.48 2 2 6.48 2 12c0 5.03 3.66 9.16 8.44 9.87v-6.98H8.74v-2.89h1.7V9.54c0-1.68.6-2.83 2.02-2.83 1.1 0 1.75.08 1.75.08v1.93h-1.05c-1.03 0-1.35.64-1.35 1.29v1.53h2.29l-.37 2.89h-1.92v6.98C18.34 21.16 22 17.03 22 12c0-5.52-4.48-10-10-10z"/>
+                        <path fill="#ffffff" d="M12 2C6.48 2 2 6.48 2 12c0 5.03 3.66 9.16 8.44 9.87v-6.98H8.74v-2.89h1.7V9.54c0-1.68.6-2.83 2.02-2.83 1.1 0 1.75.08 1.75.08v1.93h-1.05c-1.03 0-1.35.64-1.35 1.29v1.53h2.29l-.37 2.89h-1.92v6.98C18.34 21.16 22 17.03 22 12c0-5.52-4.48-10-10-10z" />
                     </svg>
                 </a>
                 <a href="#" class="hover:bg-gray-700 rounded-full p-2" title="Instagram">
@@ -129,4 +155,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </footer>
 </body>
+
 </html>
